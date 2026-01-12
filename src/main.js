@@ -1,4 +1,5 @@
 import { renderCircuit } from "./render/renderCircuit.js";
+import { initGatePalette, enableSlotDrops, resetAssignment} from "./render/drag.js";
 
 // 你目前 question 資料夾下的題目檔案
 const LEVEL_FILES = [
@@ -38,7 +39,10 @@ async function main() {
   const info = document.getElementById("info");
   const levelBar = document.getElementById("levelBar");
   const gateBar = document.getElementById("gateBar");
+
   renderGateBar(gateBar);
+  initGatePalette(gateBar);
+  
 
 
   const { setActive } = buildLevelBar(levelBar, LEVEL_FILES.length, async (idx) => {
@@ -47,7 +51,9 @@ async function main() {
       info.textContent = `Loading level ${idx + 1}...`;
 
       const q = await loadQuestion(LEVEL_FILES[idx]);
+      resetAssignment();
       renderCircuit(q, board, { columns: 3 });
+      enableSlotDrops(board)
 
       info.textContent = `Level ${idx + 1}: ${q.id ?? "unknown"}`;
     } catch (err) {
@@ -63,7 +69,9 @@ async function main() {
   // 預設載入第 1 關
   setActive(0);
   const q0 = await loadQuestion(LEVEL_FILES[0]);
+  resetAssignment();
   renderCircuit(q0, board, { columns: 3 });
+  enableSlotDrops(board)
   info.textContent = `Level 1: ${q0.id ?? "unknown"}`;
 }
 

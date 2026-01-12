@@ -68,7 +68,7 @@
 .wire { fill:none; stroke: rgba(160,210,255,.60); stroke-width: 2.4; }
 .wireArrow { fill: rgba(160,210,255,.80); }
 .wireLabel { fill: rgba(220,240,255,.9); font-size: 12px; font-weight: 900; }
-
+.wireLayer { pointer-events: none; }
 /* level bar */
 .levelBar{
   display:flex;
@@ -131,6 +131,29 @@
 .gateCard:hover{
   background: rgba(255, 80, 80, .14);
 }
+
+/* slot drop feedback */
+.blankBox.droppable{
+  outline: 3px solid rgba(160,210,255,.55);
+  outline-offset: 2px;
+}
+
+/* the placed gate "chip" inside a blankBox */
+.gatePlaced{
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  letter-spacing: .8px;
+  color: rgba(255,255,255,.92);
+  user-select: none;
+}
+
 
 
   </style>
