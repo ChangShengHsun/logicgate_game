@@ -57,33 +57,33 @@ export function renderCircuit(question, container, options = {}) {
     nodeLayer.appendChild(el);
   });
 
-  // ---- Slots: only a red rectangle blank ----
   slots.forEach((s, idx) => {
-    const col = idx % cfg.columns;
-    const row = Math.floor(idx / cfg.columns);
+  // ✅ 如果題目有指定位置，就用題目指定的 col/row
+  // 否則 fallback 回原本的 idx grid 排法
+  const col = Number.isInteger(s.col) ? s.col : (idx % cfg.columns);
+  const row = Number.isInteger(s.row) ? s.row : Math.floor(idx / cfg.columns);
 
-    const x = cfg.inputX + 150 + col * (cfg.slotWidth + cfg.hGap);
-    const y = cfg.inputStartY - 10 + row * (cfg.slotHeight + cfg.vGap);
+  const x = cfg.inputX + 150 + col * (cfg.slotWidth + cfg.hGap);
+  const y = cfg.inputStartY - 10 + row * (cfg.slotHeight + cfg.vGap);
 
-    nodePos.set(s.id, {
-      x, y, w: cfg.slotWidth, h: cfg.slotHeight,
-      type: "slot",
-      arity: s.arity,
-      in: s.in
-    });
-
-    const el = document.createElement("div");
-    el.className = "node slotNode";
-    el.dataset.nodeId = s.id;
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    el.style.width = `${cfg.slotWidth}px`;
-    el.style.height = `${cfg.slotHeight}px`;
-
-    // 只留紅框空格（之後 gate 會被你放到這個框框內）
-    el.innerHTML = `<div class="blankBox" title="slot ${s.id}"></div>`;
-    nodeLayer.appendChild(el);
+  nodePos.set(s.id, {
+    x, y, w: cfg.slotWidth, h: cfg.slotHeight,
+    type: "slot",
+    arity: s.arity,
+    in: s.in
   });
+
+  const el = document.createElement("div");
+  el.className = "node slotNode";
+  el.dataset.nodeId = s.id;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  el.style.width = `${cfg.slotWidth}px`;
+  el.style.height = `${cfg.slotHeight}px`;
+  el.innerHTML = `<div class="blankBox" title="slot ${s.id}"></div>`;
+  nodeLayer.appendChild(el);
+});
+
 
   // SVG size
   resizeSvgToFit(stage, svg, nodePos);

@@ -1,0 +1,16 @@
+{
+  "id": "test03",
+  "inputs": {
+    "A": 1,
+    "B": 0,
+    "C": 1
+  },
+  "slots": [
+    { "id": "s1", "arity": 2, "in": ["A", "B"], "col": 0, "row": 0 },
+    { "id": "s2", "arity": 2, "in": ["s1", "C"], "col": 1, "row": 0 },
+    { "id": "s3", "arity": 1, "in": ["s2"], "col": 2, "row": 1 },
+    { "id": "s4", "arity": 2, "in": ["s2", "s3"], "col": 3, "row": 0 }
+  ],
+  "output": "s4",
+  "expectedOutput": 1
+}
