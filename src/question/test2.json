@@ -1,0 +1,47 @@
+{
+  "id": "mux_2to1_demo",
+
+  "inputs": {
+    "In0": 1,
+    "In1": 0,
+    "Sel": 0
+  },
+
+  "slots": [
+    {
+      "id": "s1",
+      "arity": 1,
+      "in": ["Sel"],
+      "accept": ["NOT"]
+    },
+    {
+      "id": "s2",
+      "arity": 2,
+      "in": ["In0", "s1"],
+      "accept": ["AND", "NAND"]
+    },
+    {
+      "id": "s3",
+      "arity": 2,
+      "in": ["In1", "Sel"],
+      "accept": ["AND", "NAND"]
+    },
+    {
+      "id": "s4",
+      "arity": 2,
+      "in": ["s2", "s3"],
+      "accept": ["OR", "XOR"]
+    }
+  ],
+
+  "output": "s4",
+
+  "solution": {
+    "s1": "NOT",
+    "s2": "AND",
+    "s3": "AND",
+    "s4": "OR"
+  },
+
+  "expectedOutput": 1
+}
