@@ -1,77 +1,68 @@
 // src/render/renderCircuit.js
 
-/**
- * Render a slot-based circuit skeleton from JSON into container.
- * - Only visualizes: inputs, slots (as blanks), and wires.
- * - Does NOT handle drag/drop, gate placement, or evaluation.
- */
 export function renderCircuit(question, container, options = {}) {
   const cfg = {
-    columns: 3,           // layout columns for slots
-    slotWidth: 220,
+    columns: 3,
+    slotWidth: 180,
     slotHeight: 90,
-    hGap: 80,
-    vGap: 40,
+    hGap: 110,
+    vGap: 55,
     inputX: 40,
-    inputStartY: 80,
-    inputGapY: 56,
+    inputStartY: 110,
+    inputGapY: 72,
     ...options,
   };
 
   container.innerHTML = "";
   container.classList.add("circuitRoot");
 
-  const title = document.createElement("div");
-  title.className = "circuitTitle";
-  title.textContent = question.title ?? question.id ?? "Circuit";
-  container.appendChild(title);
-
   const stage = document.createElement("div");
   stage.className = "circuitStage";
   container.appendChild(stage);
 
-  // SVG layer for wires (behind nodes)
+  // SVG layer for wires
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("class", "wireLayer");
   stage.appendChild(svg);
 
-  // Node layer (inputs + slots)
+  // Node layer
   const nodeLayer = document.createElement("div");
   nodeLayer.className = "nodeLayer";
   stage.appendChild(nodeLayer);
 
-  // --- Layout: inputs on the left, slots in a grid ---
-  const inputs = normalizeInputs(question);
+  const inputsObj = (question.inputs && typeof question.inputs === "object" && !Array.isArray(question.inputs))
+    ? question.inputs
+    : {};
+  const inputs = normalizeInputs(question); // ["A","B","C"...]
   const slots = question.slots ?? [];
 
-  const nodePos = new Map(); // id -> {x,y,w,h,type:"input"|"slot", arity, in[]}
+  const nodePos = new Map(); // id -> {x,y,w,h}
 
-  // Place inputs
+  // ---- Inputs: show only 0/1 ----
   inputs.forEach((name, i) => {
     const x = cfg.inputX;
     const y = cfg.inputStartY + i * cfg.inputGapY;
-    nodePos.set(name, { x, y, w: 90, h: 36, type: "input" });
+    nodePos.set(name, { x, y, w: 64, h: 64, type: "input" });
+
+    const val = (name in inputsObj) ? Number(inputsObj[name]) : "?";
 
     const el = document.createElement("div");
     el.className = "node inputNode";
     el.dataset.nodeId = name;
     el.style.left = `${x}px`;
     el.style.top = `${y}px`;
-    el.style.width = `90px`;
-    el.style.height = `36px`;
-    el.innerHTML = `
-      <div class="nodeName">${escapeHtml(name)}</div>
-      <div class="nodeMeta">input</div>
-    `;
+    el.style.width = `64px`;
+    el.style.height = `64px`;
+    el.innerHTML = `<div class="bit">${val}</div>`;
     nodeLayer.appendChild(el);
   });
 
-  // Place slots (simple grid)
+  // ---- Slots: only a red rectangle blank ----
   slots.forEach((s, idx) => {
     const col = idx % cfg.columns;
     const row = Math.floor(idx / cfg.columns);
 
-    const x = cfg.inputX + 180 + col * (cfg.slotWidth + cfg.hGap);
+    const x = cfg.inputX + 150 + col * (cfg.slotWidth + cfg.hGap);
     const y = cfg.inputStartY - 10 + row * (cfg.slotHeight + cfg.vGap);
 
     nodePos.set(s.id, {
@@ -89,23 +80,15 @@ export function renderCircuit(question, container, options = {}) {
     el.style.width = `${cfg.slotWidth}px`;
     el.style.height = `${cfg.slotHeight}px`;
 
-    el.innerHTML = `
-      <div class="slotHeader">
-        <div class="slotId">Slot <span class="mono">${escapeHtml(s.id)}</span></div>
-        <div class="pill">arity: ${Number(s.arity)}</div>
-      </div>
-      <div class="slotBody">
-        <div class="blank">[ 空格 ]</div>
-        <div class="slotIn mono">in: ${escapeHtml((s.in ?? []).join(", "))}</div>
-      </div>
-    `;
+    // 只留紅框空格（之後 gate 會被你放到這個框框內）
+    el.innerHTML = `<div class="blankBox" title="slot ${s.id}"></div>`;
     nodeLayer.appendChild(el);
   });
 
-  // After DOM is in place, size SVG to stage
+  // SVG size
   resizeSvgToFit(stage, svg, nodePos);
 
-  // Draw wires: from each source in slot.in -> this slot
+  // Wires: from each source in slot.in -> this slot
   for (const s of slots) {
     const dst = nodePos.get(s.id);
     if (!dst || !Array.isArray(s.in)) continue;
@@ -115,50 +98,65 @@ export function renderCircuit(question, container, options = {}) {
       if (!src) return;
 
       const p1 = rightMid(src);
-      // spread multiple inputs on left side of slot
       const p2 = leftPort(dst, s.in.length, k);
-
       drawBezier(svg, p1.x, p1.y, p2.x, p2.y);
     });
   }
 
-  // Output marker (optional)
+    // Output box (show 1/0/?)
   if (question.output && nodePos.has(question.output)) {
     const out = nodePos.get(question.output);
-    const p = rightMid(out);
-    drawArrow(svg, p.x, p.y, p.x + 80, p.y);
-    drawLabel(svg, p.x + 84, p.y + 4, "OUT");
+
+    // place OUT box to the right of output slot
+    const outBoxId = "__OUT__";
+    const outBox = {
+      x: out.x + out.w + 120,
+      y: out.y + out.h / 2 - 32,
+      w: 64,
+      h: 64,
+      type: "out"
+    };
+    nodePos.set(outBoxId, outBox);
+
+    // draw wire from output slot to OUT box
+    const p1 = rightMid(out);
+    const p2 = { x: outBox.x, y: outBox.y + outBox.h / 2 };
+    drawBezier(svg, p1.x, p1.y, p2.x, p2.y);
+
+    // render OUT node (default '?')
+    const outEl = document.createElement("div");
+    outEl.className = "node outNode";
+    outEl.dataset.nodeId = outBoxId;
+    outEl.style.left = `${outBox.x}px`;
+    outEl.style.top = `${outBox.y}px`;
+    outEl.style.width = `${outBox.w}px`;
+    outEl.style.height = `${outBox.h}px`;
+    outEl.innerHTML = `<div class="bit">?</div>`;
+    nodeLayer.appendChild(outEl);
   }
 
-  return {
-    nodePos,
-    rerender: () => renderCircuit(question, container, options),
-  };
+  return { nodePos };
 }
 
 /* ---------------- helpers ---------------- */
 
 function normalizeInputs(question) {
-  // support: inputs: ["A","B"] or inputs: {A:1,B:0}
   if (Array.isArray(question.inputs)) return question.inputs;
   if (question.inputs && typeof question.inputs === "object") return Object.keys(question.inputs);
-  // fallback: collect from slot.in where it is not another slot id
+
   const slotIds = new Set((question.slots ?? []).map(s => s.id));
   const ins = new Set();
   for (const s of (question.slots ?? [])) {
-    for (const x of (s.in ?? [])) {
-      if (!slotIds.has(x)) ins.add(x);
-    }
+    for (const x of (s.in ?? [])) if (!slotIds.has(x)) ins.add(x);
   }
   return Array.from(ins);
 }
 
 function resizeSvgToFit(stage, svg, nodePos) {
-  // compute bounds
   let maxX = 0, maxY = 0;
   for (const v of nodePos.values()) {
-    maxX = Math.max(maxX, v.x + v.w + 140);
-    maxY = Math.max(maxY, v.y + v.h + 120);
+    maxX = Math.max(maxX, v.x + v.w + 200);
+    maxY = Math.max(maxY, v.y + v.h + 160);
   }
   stage.style.minHeight = `${maxY}px`;
   stage.style.minWidth = `${maxX}px`;
@@ -167,20 +165,18 @@ function resizeSvgToFit(stage, svg, nodePos) {
   svg.setAttribute("viewBox", `0 0 ${maxX} ${maxY}`);
 }
 
-function rightMid(n) {
-  return { x: n.x + n.w, y: n.y + n.h / 2 };
-}
+function rightMid(n) { return { x: n.x + n.w, y: n.y + n.h / 2 }; }
 
 function leftPort(n, totalPorts, idx) {
   if (totalPorts <= 1) return { x: n.x, y: n.y + n.h / 2 };
-  const topPad = 22;
-  const usable = n.h - topPad - 18;
+  const topPad = 16;
+  const usable = n.h - topPad * 2;
   const step = usable / (totalPorts - 1);
   return { x: n.x, y: n.y + topPad + idx * step };
 }
 
 function drawBezier(svg, x1, y1, x2, y2) {
-  const dx = Math.max(40, (x2 - x1) * 0.5);
+  const dx = Math.max(50, (x2 - x1) * 0.45);
   const c1x = x1 + dx, c1y = y1;
   const c2x = x2 - dx, c2y = y2;
 
@@ -188,14 +184,6 @@ function drawBezier(svg, x1, y1, x2, y2) {
   path.setAttribute("d", `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`);
   path.setAttribute("class", "wire");
   svg.appendChild(path);
-
-  // small dot at destination
-  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-  dot.setAttribute("cx", x2);
-  dot.setAttribute("cy", y2);
-  dot.setAttribute("r", 3.2);
-  dot.setAttribute("class", "wireDot");
-  svg.appendChild(dot);
 }
 
 function drawArrow(svg, x1, y1, x2, y2) {
@@ -208,7 +196,7 @@ function drawArrow(svg, x1, y1, x2, y2) {
   svg.appendChild(line);
 
   const head = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  const size = 7;
+  const size = 8;
   head.setAttribute("d", `M ${x2} ${y2} L ${x2 - size} ${y2 - size/2} L ${x2 - size} ${y2 + size/2} Z`);
   head.setAttribute("class", "wireArrow");
   svg.appendChild(head);
@@ -221,10 +209,4 @@ function drawLabel(svg, x, y, text) {
   t.setAttribute("class", "wireLabel");
   t.textContent = text;
   svg.appendChild(t);
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
-  }[m]));
 }

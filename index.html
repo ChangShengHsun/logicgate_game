@@ -10,48 +10,64 @@
     #info { opacity:.8; font-size:13px; }
     main { padding:16px; }
 
-    /* circuit styles */
-    .circuitRoot { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:14px; overflow:auto; }
-    .circuitTitle { font-weight:900; margin-bottom:10px; }
-    .circuitStage { position:relative; min-height:520px; min-width:920px; }
-    .wireLayer { position:absolute; inset:0; z-index:0; }
-    .nodeLayer { position:absolute; inset:0; z-index:1; }
+    /* circuit container */
+.circuitRoot { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:14px; overflow:auto; }
+.circuitStage { position:relative; min-height:520px; min-width:920px; }
+.wireLayer { position:absolute; inset:0; z-index:0; }
+.nodeLayer { position:absolute; inset:0; z-index:1; }
 
-    .node { position:absolute; border-radius:14px; }
-    .inputNode {
-      padding:8px 10px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.08);
-    }
-    .nodeName { font-weight:900; }
-    .nodeMeta { opacity:.75; font-size:12px; margin-top:2px; }
+.node { position:absolute; border-radius:14px; }
 
-    .slotNode {
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      padding:10px 10px 12px;
-    }
-    .slotHeader { display:flex; justify-content:space-between; gap:10px; align-items:center; }
-    .slotId { font-weight:900; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    .pill { font-size:12px; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); }
-    .slotBody { margin-top:8px; display:grid; gap:8px; }
-    .blank {
-      display:inline-block;
-      width: fit-content;
-      padding:6px 10px;
-      border-radius:12px;
-      border:2px dashed rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
-      font-weight:900;
-    }
-    .slotIn { opacity:.8; font-size:12px; }
+/* Inputs as 0/1 only */
+.inputNode{
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.inputNode .bit{
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
 
-    /* wires */
-    .wire { fill:none; stroke: rgba(160,210,255,.55); stroke-width: 2.2; }
-    .wireDot { fill: rgba(160,210,255,.9); }
-    .wireArrow { fill: rgba(160,210,255,.7); }
-    .wireLabel { fill: rgba(220,240,255,.9); font-size: 12px; font-weight: 900; }
+/* Output box */
+.outNode{
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.outNode .bit{
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+
+/* Slot container (transparent), only show a red blank box inside */
+.slotNode{
+  background: transparent;
+  border: none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.blankBox{
+  width: 110px;
+  height: 58px;
+  border-radius: 12px;
+  border: 3px solid rgba(255, 80, 80, .95);
+  background: rgba(255, 80, 80, .08);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.2) inset;
+}
+
+/* wires */
+.wire { fill:none; stroke: rgba(160,210,255,.60); stroke-width: 2.4; }
+.wireArrow { fill: rgba(160,210,255,.80); }
+.wireLabel { fill: rgba(220,240,255,.9); font-size: 12px; font-weight: 900; }
   </style>
 </head>
 <body>
