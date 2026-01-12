@@ -143,12 +143,13 @@ export function renderCircuit(question, container, options = {}) {
     // render OUT node (default '?')
     const outEl = document.createElement("div");
     outEl.className = "node outNode";
+    outEl.id = "outbox";
     outEl.dataset.nodeId = outBoxId;
     outEl.style.left = `${outBox.x}px`;
     outEl.style.top = `${outBox.y}px`;
     outEl.style.width = `${outBox.w}px`;
     outEl.style.height = `${outBox.h}px`;
-    outEl.innerHTML = `<div class="bit">?</div>`;
+    outEl.innerHTML = `<div class="bit" id="outBit">?</div>`;
     nodeLayer.appendChild(outEl);
   }
 

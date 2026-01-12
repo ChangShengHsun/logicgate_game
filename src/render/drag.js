@@ -4,7 +4,7 @@
 // - Drop replaces existing gate in that slot
 // - Double click on a slot to clear
 // - Maintains assignment map: { slotId: gateName }
-
+import { GATES } from "../engine/gates.js";
 const MIME = "application/x-logic-gate";
 
 // shared state (simple for now)
