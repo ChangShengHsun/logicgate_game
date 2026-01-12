@@ -6,6 +6,21 @@
 // - Maintains assignment map: { slotId: gateName }
 import { evaluate } from "../engine/check.js";
 const MIME = "application/x-logic-gate";
+const GATE_ARITY = {
+  buffer: 1,
+  not: 1,
+  and: 2,
+  or: 2,
+  xor: 2,
+  nand: 2,
+  nor: 2,
+  xnor: 2
+};
+
+function gateArity(gate) {
+  return GATE_ARITY[gate] ?? 2; // 預設當作 2-input
+}
+
 
 // shared state (simple for now)
 let _assignment = {}; // slotId -> gateName
@@ -57,6 +72,16 @@ export function enableSlotDrops(boardEl, opts = {}) {
   const onChange = typeof opts.onChange === "function" ? opts.onChange : null;
 
   const question = opts.question || null;
+    const slotMap = new Map();
+    if (question?.slots) {
+    for (const s of question.slots) slotMap.set(s.id, s);
+    }
+  function acceptByArity(slotId, gate) {
+  const slot = slotMap.get(slotId);
+  if (!slot) return true; // 找不到就放行（你也可以改成 false）
+  return gateArity(gate) === slot.arity;
+}
+
   const outBitEl = opts.outBitEl || null;
 
   const blanks = boardEl.querySelectorAll(".slotNode .blankBox");
@@ -92,6 +117,7 @@ export function enableSlotDrops(boardEl, opts = {}) {
 
       const slotId = blank.closest(".slotNode")?.dataset.nodeId;
       if (!slotId || !gate) return;
+      if (!acceptByArity(slotId, gate)) return; // check arity
       if (!accept(slotId, gate)) return;
 
       placeGateIntoBlank(blank, gate);
@@ -133,16 +159,4 @@ function placeGateIntoBlank(blank, gate) {
 
 function clearBlank(blank) {
   blank.innerHTML = "";
-}
-
-function updateOutput() {
-  const bit = document.getElementById("outBit");
-  if (!bit || !window.currentQuestion) return;
-
-  try {
-    const res = evaluate(window.currentQuestion, _assignment);
-    bit.textContent = res.value;
-  } catch {
-    bit.textContent = "?";
-  }
 }
