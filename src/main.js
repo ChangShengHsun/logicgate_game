@@ -96,11 +96,27 @@ main().catch(err => {
 function renderGateBar(container) {
   const gates = ["buffer","not","and","or","xor","nand","nor","xnor"];
   container.innerHTML = "";
+
   for (const g of gates) {
     const el = document.createElement("div");
     el.className = "gateCard";
-    el.textContent = g;
-    el.dataset.gate = g; // 之後 drag/drop 會用到
+    el.dataset.gate = g;
+
+    // 圖片覆蓋整張卡
+    const img = document.createElement("img");
+    img.className = "gateImg";
+    img.src = `./img/${g}.png`;
+    img.alt = g;
+
+    el.appendChild(img);
+
+    // 你還想保留文字 debug（可選）
+    // const label = document.createElement("div");
+    // label.className = "gateLabel";
+    // label.textContent = g;
+    // el.appendChild(label);
+
     container.appendChild(el);
   }
 }
+

@@ -112,6 +112,8 @@
 
 /* 跟你的 blankBox 同尺寸 */
 .gateCard{
+  position: relative;   /* ✅ 讓裡面的 img 可以 absolute 貼齊 */
+  overflow: hidden;     /* ✅ 超出就裁掉 */
   width: 110px;
   height: 58px;
   border-radius: 12px;
@@ -126,6 +128,29 @@
   text-transform: uppercase;
   user-select: none;
 }
+.gateImg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.gatePlaced{
+  position: relative;
+  overflow: hidden;
+}
+
+.gatePlacedImg{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
 
 /* forDrag */
 .gateCard:hover{

@@ -168,11 +168,17 @@ function placeGateIntoBlank(blank, gate) {
 
   const pill = document.createElement("div");
   pill.className = "gatePlaced";
-  pill.textContent = gate.toUpperCase();
   pill.dataset.gate = gate;
 
+  const img = document.createElement("img");
+  img.className = "gatePlacedImg";
+  img.src = `./img/${gate}.png`; // ✅ 路徑要跟你 gateBar 用同一套
+  img.alt = gate;
+
+  pill.appendChild(img);
   blank.appendChild(pill);
 }
+
 
 function clearBlank(blank) {
   blank.innerHTML = "";
