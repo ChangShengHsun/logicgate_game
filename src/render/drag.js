@@ -4,7 +4,7 @@
 // - Drop replaces existing gate in that slot
 // - Double click on a slot to clear
 // - Maintains assignment map: { slotId: gateName }
-import { GATES } from "../engine/gates.js";
+import { evaluate } from "../engine/check.js";
 const MIME = "application/x-logic-gate";
 
 // shared state (simple for now)
@@ -48,20 +48,34 @@ export function initGatePalette(gateBarEl) {
  * @param {(slotId: string, gate: string) => boolean} [opts.accept] - optional accept filter
  * @param {(assignment: Object) => void} [opts.onChange] - callback after placement/clear
  */
+// opts.question: the current question JSON
+// opts.outBitEl: the DOM element to update (the <div class="bit"> inside OUT box)
 export function enableSlotDrops(boardEl, opts = {}) {
   if (!boardEl) throw new Error("enableSlotDrops: boardEl not found");
 
   const accept = typeof opts.accept === "function" ? opts.accept : () => true;
   const onChange = typeof opts.onChange === "function" ? opts.onChange : null;
 
+  const question = opts.question || null;
+  const outBitEl = opts.outBitEl || null;
+
   const blanks = boardEl.querySelectorAll(".slotNode .blankBox");
 
+  function updateOutput() {
+    if (!question || !outBitEl) return;
+    try {
+      const res = evaluate(question, _assignment); // evaluate.js
+      outBitEl.textContent = String(res.value);
+    } catch {
+      outBitEl.textContent = "?";
+    }
+  }
+
   blanks.forEach((blank) => {
-    // Allow drop
     blank.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = "copy";
-        blank.classList.add("droppable");
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      blank.classList.add("droppable");
     });
 
     blank.addEventListener("dragleave", () => {
@@ -76,9 +90,7 @@ export function enableSlotDrops(boardEl, opts = {}) {
         .trim()
         .toLowerCase();
 
-      const slotEl = blank.closest(".slotNode");
-      const slotId = slotEl?.dataset.nodeId;
-
+      const slotId = blank.closest(".slotNode")?.dataset.nodeId;
       if (!slotId || !gate) return;
       if (!accept(slotId, gate)) return;
 
@@ -86,9 +98,10 @@ export function enableSlotDrops(boardEl, opts = {}) {
       _assignment[slotId] = gate;
 
       if (onChange) onChange(getAssignment());
+      updateOutput(); // ✅ evaluate immediately
     });
 
-    // Double click to clear
+    // keep your dblclick-clear behavior
     blank.addEventListener("dblclick", () => {
       const slotId = blank.closest(".slotNode")?.dataset.nodeId;
       if (!slotId) return;
@@ -97,9 +110,13 @@ export function enableSlotDrops(boardEl, opts = {}) {
       delete _assignment[slotId];
 
       if (onChange) onChange(getAssignment());
+      updateOutput(); // ✅ update to "?" again if not full
     });
   });
+
+  updateOutput(); // ✅ set initial output when enabling
 }
+
 
 /* ---------------- UI helpers ---------------- */
 
@@ -116,4 +133,16 @@ function placeGateIntoBlank(blank, gate) {
 
 function clearBlank(blank) {
   blank.innerHTML = "";
+}
+
+function updateOutput() {
+  const bit = document.getElementById("outBit");
+  if (!bit || !window.currentQuestion) return;
+
+  try {
+    const res = evaluate(window.currentQuestion, _assignment);
+    bit.textContent = res.value;
+  } catch {
+    bit.textContent = "?";
+  }
 }

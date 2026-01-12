@@ -53,7 +53,12 @@ async function main() {
       const q = await loadQuestion(LEVEL_FILES[idx]);
       resetAssignment();
       renderCircuit(q, board, { columns: 3 });
-      enableSlotDrops(board)
+      const outBitEl = document.getElementById("outBit");
+    enableSlotDrops(board, {
+        question: q,
+        outBitEl,
+    });
+
 
       info.textContent = `Level ${idx + 1}: ${q.id ?? "unknown"}`;
     } catch (err) {
@@ -71,7 +76,13 @@ async function main() {
   const q0 = await loadQuestion(LEVEL_FILES[0]);
   resetAssignment();
   renderCircuit(q0, board, { columns: 3 });
-  enableSlotDrops(board)
+  const outBitEl = document.getElementById("outBit");
+
+    enableSlotDrops(board, {
+    question: q0,
+    outBitEl,
+    });
+
   info.textContent = `Level 1: ${q0.id ?? "unknown"}`;
 }
 
