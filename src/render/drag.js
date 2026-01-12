@@ -17,6 +17,8 @@ const GATE_ARITY = {
   xnor: 2
 };
 
+let _draggingGate = null;
+
 function gateArity(gate) {
   return GATE_ARITY[gate] ?? 2; // 預設當作 2-input
 }
@@ -46,12 +48,19 @@ export function initGatePalette(gateBarEl) {
     card.addEventListener("dragstart", (e) => {
       const gate = (card.dataset.gate || card.textContent || "").trim().toLowerCase();
       if (!gate) return;
+      _draggingGate = gate;
 
       e.dataTransfer.setData(MIME, gate);
       e.dataTransfer.setData("text/plain", gate); // fallback
       e.dataTransfer.effectAllowed = "copy";
     });
+
+    card.addEventListener("dragend", () => {
+        _draggingGate = null;
+    });
   });
+
+    
 }
 
 /**
@@ -98,10 +107,18 @@ export function enableSlotDrops(boardEl, opts = {}) {
 
   blanks.forEach((blank) => {
     blank.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "copy";
-      blank.classList.add("droppable");
-    });
+  const slotId = blank.closest(".slotNode")?.dataset.nodeId;
+  if (!slotId) return;
+
+  if (_draggingGate && acceptByArity(slotId, _draggingGate)) {
+    e.preventDefault();              // 只在合法時才 allow drop
+    e.dataTransfer.dropEffect = "copy";
+    blank.classList.add("droppable");
+  } else {
+    blank.classList.remove("droppable");
+  }
+});
+
 
     blank.addEventListener("dragleave", () => {
       blank.classList.remove("droppable");
