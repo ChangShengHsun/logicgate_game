@@ -1,0 +1,30 @@
+{
+  "id": "test07",
+  "inputs": {
+    "A": 0,
+    "B": 1,
+    "C": 1,
+    "D": 0,
+    "E": 0,
+    "F": 0
+  },
+  "slots": [
+    { "id": "s1", "arity": 2, "in": ["A", "B"], "col": 0, "row": 0 },
+    { "id": "s2", "arity": 2, "in": ["C", "D"], "col": 0, "row": 1 },
+    { "id": "s3", "arity": 2, "in": ["E", "F"], "col": 0, "row": 3 },
+
+    { "id": "s4", "arity": 2, "in": ["s1", "s2"], "col": 1, "row": 1 },
+    { "id": "s5", "arity": 1, "in": ["s3"], "col": 1, "row": 3 },
+    { "id": "s6", "arity": 2, "in": ["s4", "s5"], "col": 3, "row": 2 }
+  ],
+  "output": "s6",
+  "gateCounts": {
+    "xor": 2,
+    "and": 2,
+    "not": 1,
+
+    "or": 1,
+    "nand": 1
+  },
+  "expectedOutput": 1
+}

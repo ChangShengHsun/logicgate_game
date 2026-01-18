@@ -6,6 +6,13 @@ const LEVEL_FILES = [
   "./src/question/test.json",
   "./src/question/test2.json",
   "./src/question/test3.json",
+  "./src/question/test4.json",
+  "./src/question/test5.json",
+  "./src/question/test6.json",
+  "./src/question/test7.json",
+  "./src/question/test8.json",
+  "./src/question/test9.json",
+  "./src/question/test10.json",
 ];
 const ALL_GATES = ["buffer", "not", "and", "or", "xor", "nand", "nor", "xnor"];
 

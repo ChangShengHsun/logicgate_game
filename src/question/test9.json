@@ -1,0 +1,40 @@
+{
+  "id": "test09",
+  "inputs": {
+    "A": 1,
+    "B": 0,
+    "C": 1,
+    "D": 0,
+    "E": 1,
+    "F": 0
+  },
+  "slots": [
+    { "id": "s1", "arity": 1, "in": ["A"], "col": 0, "row": 0 },
+
+    { "id": "s2", "arity": 2, "in": ["s1", "B"], "col": 1, "row": 0 },
+
+    { "id": "s3", "arity": 2, "in": ["C", "D"], "col": 0, "row": 1 },
+    { "id": "s4", "arity": 1, "in": ["s3"], "col": 1, "row": 1 },
+
+    { "id": "s5", "arity": 2, "in": ["E", "F"], "col": 1, "row": 4 },
+    { "id": "s6", "arity": 1, "in": ["s5"], "col": 2, "row": 4 },
+
+    { "id": "s7", "arity": 2, "in": ["s2", "s4"], "col": 4, "row": 1 },
+    { "id": "s8", "arity": 2, "in": ["s6", "s4"], "col": 3, "row": 3 },
+
+    { "id": "s9", "arity": 1, "in": ["s8"], "col": 4, "row": 3 },
+
+    { "id": "s10", "arity": 2, "in": ["s7", "s9"], "col": 5, "row": 2 }
+  ],
+  "output": "s10",
+  "gateCounts": {
+    "buffer": 3,
+    "or": 2,
+    "and": 4,
+    "not": 1,
+
+    "xor": 1,
+    "nand": 1
+  },
+  "expectedOutput": 1
+}
