@@ -30,6 +30,14 @@
 
   "output": "s3",
 
+  "gateCounts": {
+    "or": 1,
+    "and": 1,
+    "not": 1,
+    "xor": 1,
+    "nand": 1
+  },
+
   "solution": {
     "s1": "OR",
     "s2": "AND",

@@ -43,6 +43,7 @@ src/
     { "id": "s2", "arity": 2, "in": ["s1", "C"], "accept": ["AND"] }
   ],
   "output": "s2",
+  "gateCounts": { "or": 1, "and": 2, "not": 1, "xor": 1, "buffer": 1 },
   "solution": { "s1": "OR", "s2": "AND" },
   "expectedOutput": 1
 }
@@ -52,6 +53,7 @@ Field notes:
 - `inputs`: input pins and their initial values (0/1)
 - `slots`: placeable gate nodes, `in` lists source nodes
 - `output`: final output node id
+- `gateCounts`: gate name -> remaining count to show in the gate bar (optional)
 - `solution`: reference solution (optional)
 - `expectedOutput`: expected output bit (optional)
 

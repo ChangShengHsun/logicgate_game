@@ -46,6 +46,11 @@ export function initGatePalette(gateBarEl) {
     card.setAttribute("draggable", "true");
 
     card.addEventListener("dragstart", (e) => {
+      const remainingAttr = card.dataset.remaining;
+      if (remainingAttr !== undefined && remainingAttr !== "") {
+        const remaining = Number(remainingAttr);
+        if (!Number.isNaN(remaining) && remaining <= 0) return;
+      }
       const gate = (card.dataset.gate || card.textContent || "").trim().toLowerCase();
       if (!gate) return;
       _draggingGate = gate;
@@ -110,7 +115,7 @@ export function enableSlotDrops(boardEl, opts = {}) {
   const slotId = blank.closest(".slotNode")?.dataset.nodeId;
   if (!slotId) return;
 
-  if (_draggingGate && acceptByArity(slotId, _draggingGate)) {
+  if (_draggingGate && acceptByArity(slotId, _draggingGate) && accept(slotId, _draggingGate)) {
     e.preventDefault();              // 只在合法時才 allow drop
     e.dataTransfer.dropEffect = "copy";
     blank.classList.add("droppable");

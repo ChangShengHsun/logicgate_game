@@ -10,3 +10,4 @@ export const GATES = {
   nor:  (a,b) => (a | b) ^ 1,
   xnor: (a,b) => (a ^ b) ^ 1,
 };
+

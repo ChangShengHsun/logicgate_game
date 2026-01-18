@@ -11,5 +11,13 @@
     { "id": "s5", "arity": 2, "in": ["s2", "s4"], "col": 2, "row": 0 }
   ],
   "output": "s5",
+  "gateCounts": {
+    "and": 2,
+    "or": 1,
+    "not": 2,
+    "nor": 1,
+    "xor": 1,
+    "nand": 1
+  },
   "expectedOutput": 1
 }
