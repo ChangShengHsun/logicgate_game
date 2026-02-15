@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lucky Draw</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">Lucky Draw</div>
+  </header>
+
+  <main class="layout">
+    <section class="wheelPanel">
+      <div class="wheelWrap">
+        <div class="pointerWrap">
+          <div class="pointer"></div>
+        </div>
+        <canvas id="wheel" width="520" height="520"></canvas>
+      </div>
+      <button id="spinBtn" class="spinBtn" type="button">Spin</button>
+      <div id="result" class="result">Result: -</div>
+    </section>
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

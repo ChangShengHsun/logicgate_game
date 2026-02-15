@@ -1,61 +1,59 @@
-# Logic Gate Game
+# 台大電機杜鵑花節攤位操作指南
 
-A small front-end logic gate drag-and-drop game built with plain HTML/CSS/JS. Levels are described in JSON, and the circuit UI is rendered with SVG + DIV nodes.
+本專案包含兩個頁面：
+- 邏輯閘遊戲（`Logic Gate Game`）
+- 抽獎轉盤（`Lucky Draw`）
 
-## Features
-- Loads levels from `src/question/*.json`
-- Renders inputs, slot nodes, and output
-- Drag gates from the Gate Bar into slots
-- Switching levels re-renders the circuit
+以下是給同為台大電機學弟妹的現場操作說明，照著做就能穩定開啟並向遊客介紹。
 
-## Getting Started
-This project uses ES modules and `fetch`, so you must run a local server.
+**1) 正確開啟網頁（Game & Lucky Draw）**
+
+本專案使用 ES modules 與 `fetch`，**不能直接雙擊開 `index.html`**，一定要開本地伺服器。
 
 ```bash
-# from the project root
+# 在專案根目錄執行
 python -m http.server
 ```
 
-Then open:
-`http://localhost:8000/`
+然後在瀏覽器開：
+- 遊戲頁：`http://localhost:8000/`
+- 抽獎頁：`http://localhost:8000/Lucky%20draw/`
 
-## Project Structure
-```
-index.html
-src/
-  main.js
-  render/
-    renderCircuit.js
-    drag.js
-  question/
-    test.json
-    test2.json
-    test3.json
-```
+常見問題：
+- 如果畫面空白或無法載入題目，90% 是沒有用伺服器開。
+- 路徑裡有空白，記得用 `Lucky%20draw`。
 
-## Level Format (JSON)
-```json
-{
-  "id": "test01",
-  "inputs": { "A": 1, "B": 1, "C": 0 },
-  "slots": [
-    { "id": "s1", "arity": 2, "in": ["A", "B"], "accept": ["OR"] },
-    { "id": "s2", "arity": 2, "in": ["s1", "C"], "accept": ["AND"] }
-  ],
-  "output": "s2",
-  "gateCounts": { "or": 1, "and": 2, "not": 1, "xor": 1, "buffer": 1 },
-  "solution": { "s1": "OR", "s2": "AND" },
-  "expectedOutput": 1
-}
-```
+**2) 介面說明（內部用）**
 
-Field notes:
-- `inputs`: input pins and their initial values (0/1)
-- `slots`: placeable gate nodes, `in` lists source nodes
-- `output`: final output node id
-- `gateCounts`: gate name -> remaining count to show in the gate bar (optional)
-- `solution`: reference solution (optional)
-- `expectedOutput`: expected output bit (optional)
+Logic Gate Game：
+- 上方是標題和目前關卡資訊。
+- 左上角有關卡按鈕（1~10），可切換題目。
+- 中間是電路圖，紅色空格是可放邏輯閘的位置。
+- 下方是可拖曳的邏輯閘（會依題目限制數量）。
 
-## FAQ
-- Opening `index.html` directly can fail to load modules or JSON. Use a local server instead.
+Lucky Draw：
+- 中間是轉盤，紅色三角形是指針。
+- 按 `Spin` 開始抽獎，數秒後停下並顯示結果。
+- 機率與獎項在 `Lucky draw/data.json` 內調整。
+
+**3) 面向遊客說明 SOP**
+
+建議口徑（可照念）：
+
+1. 「歡迎來台大電機！這邊有個小遊戲，體驗用邏輯閘組電路。」
+2. 「你看到紅色的空格是要放邏輯閘的地方，下面可以拖曳。」
+3. 「每一關都有不同限制，看能不能把輸出變成正確的 0/1。」
+4. 「完成之後可以抽獎，我們這邊用轉盤抽小禮物！」
+5. 「按一下 Spin，就會停在你的結果。」
+
+若遊客卡關：
+- 提示「先看輸入的 0/1，想像 AND/OR/NOT 的輸出。」
+- 可以建議從最靠近輸入的空格開始放。
+
+若遊客問機率：
+- 回答「機率依照轉盤設定，跟扇形比例一致」。
+
+---
+
+需要改獎項或機率：請改 `Lucky draw/data.json`。
+需要改題目：請改 `src/question/*.json`。
