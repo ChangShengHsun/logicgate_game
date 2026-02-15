@@ -8,6 +8,19 @@
     body { margin:0; font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif; background:#0b1220; color:#e7eefc; }
     header { padding:14px 18px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
     #info { opacity:.8; font-size:13px; }
+    .headerRight { display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:flex-end; }
+    .truthBtn{
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.95);
+      font-weight: 800;
+      letter-spacing: .4px;
+      cursor: pointer;
+    }
+    .truthBtn:hover{ background: rgba(255,255,255,.12); }
     main { padding:16px; }
 
     /* circuit container */
@@ -202,6 +215,55 @@
   user-select: none;
 }
 
+/* truth table overlay */
+.truthOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(6,10,18,.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 24px;
+}
+.truthOverlay.isOpen{ display: flex; }
+.truthCard{
+  position: relative;
+  width: min(1200px, 96vw);
+  height: 92vh;
+  max-width: 96vw;
+  max-height: 92vh;
+  padding: 12px;
+  box-sizing: border-box;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(14,20,32,.96);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+}
+.truthImg{
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+.truthClose{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(0,0,0,.35);
+  color: rgba(255,255,255,.9);
+  font-weight: 900;
+  cursor: pointer;
+}
+.truthClose:hover{ background: rgba(0,0,0,.5); }
+
 
 
   </style>
@@ -209,7 +271,10 @@
 <body>
   <header>
     <div style="font-weight:900;">Logic Gate Game</div>
-    <div id="info">Loading…</div>
+    <div class="headerRight">
+      <div id="info">Loading…</div>
+      <button id="truthBtn" class="truthBtn" type="button">Truth Table</button>
+    </div>
   </header>
 
   <main>
@@ -217,6 +282,13 @@
     <div id="board" class="circuitRoot"></div>
     <div id="gateBar" class="gateBar"></div>
   </main>
+
+  <div id="truthOverlay" class="truthOverlay" aria-hidden="true">
+    <div class="truthCard" role="dialog" aria-modal="true" aria-label="Truth Table">
+      <button id="truthClose" class="truthClose" type="button">×</button>
+      <img class="truthImg" src="./img/truthtable.jpg" alt="Truth table" />
+    </div>
+  </div>
 
   <script type="module" src="./src/main.js"></script>
 </body>

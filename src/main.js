@@ -48,6 +48,7 @@ async function main() {
   const levelBar = document.getElementById("levelBar");
   const gateBar = document.getElementById("gateBar");
   
+  initTruthTable();
 
 
   const { setActive } = buildLevelBar(levelBar, LEVEL_FILES.length, async (idx) => {
@@ -85,6 +86,31 @@ main().catch(err => {
 });
 
 /* ---------------------helper functions--------------------- */
+function initTruthTable() {
+  const btn = document.getElementById("truthBtn");
+  const overlay = document.getElementById("truthOverlay");
+  const close = document.getElementById("truthClose");
+  if (!btn || !overlay || !close) return;
+
+  const open = () => {
+    overlay.classList.add("isOpen");
+    overlay.setAttribute("aria-hidden", "false");
+  };
+  const hide = () => {
+    overlay.classList.remove("isOpen");
+    overlay.setAttribute("aria-hidden", "true");
+  };
+
+  btn.addEventListener("click", open);
+  close.addEventListener("click", hide);
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) hide();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && overlay.classList.contains("isOpen")) hide();
+  });
+}
+
 function renderGateBar(container, gates = ALL_GATES) {
   container.innerHTML = "";
 
@@ -250,4 +276,3 @@ function countUsedGates(assignment) {
 function normalizeGateName(gate) {
   return String(gate || "").trim().toLowerCase();
 }
-

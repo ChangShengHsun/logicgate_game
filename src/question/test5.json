@@ -9,7 +9,7 @@
   "slots": [
     { "id": "s1", "arity": 2, "in": ["A", "B"], "col": 0, "row": 0 },
     { "id": "s2", "arity": 1, "in": ["s1"], "col": 1, "row": 0 },
-    { "id": "s3", "arity": 2, "in": ["C", "D"], "col": 0, "row": 2 },
+    { "id": "s3", "arity": 2, "in": ["C", "D"], "col": 0, "row": 1 },
     { "id": "s4", "arity": 2, "in": ["s2", "s3"], "col": 2, "row": 0 }
   ],
   "output": "s4",

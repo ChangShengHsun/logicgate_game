@@ -5,9 +5,9 @@
     "B": 0
   },
   "slots": [
-    { "id": "s1", "arity": 2, "in": ["A", "B"], "col": 0, "row": 1 },
-    { "id": "s2", "arity": 2, "in": ["s1", "B"], "col": 2, "row": 1 },
-    { "id": "s3", "arity": 2, "in": ["s2", "A"], "col": 3, "row": 1 }
+    { "id": "s1", "arity": 2, "in": ["A", "B"], "col": 0, "row": 0 },
+    { "id": "s2", "arity": 2, "in": ["s1", "B"], "col": 1, "row": 0 },
+    { "id": "s3", "arity": 2, "in": ["s2", "B"], "col": 3, "row": 0 }
   ],
   "output": "s3",
   "gateCounts": {
