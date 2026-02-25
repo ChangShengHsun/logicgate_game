@@ -26,7 +26,7 @@ async function init() {
   }
   items = payload.name;
   probs = normalizeProbabilities(payload.prob);
-  colors = buildColors(items.length);
+  colors = resolveColors(payload.color, items.length);
 
   segments = buildSegments(probs);
   drawWheel(items, colors, segments);
@@ -63,6 +63,16 @@ function buildColors(n) {
     const hue = Math.round((360 / n) * i);
     palette.push(`hsl(${hue}, 70%, 55%)`);
   }
+  return palette;
+}
+
+function resolveColors(rawColors, count) {
+  if (rawColors === undefined || rawColors === null) return buildColors(count);
+  if (!Array.isArray(rawColors)) throw new Error("Invalid color format");
+  if (rawColors.length !== count) throw new Error("color length mismatch");
+
+  const palette = rawColors.map((c) => String(c).trim());
+  if (palette.some((c) => c.length === 0)) throw new Error("Invalid color value");
   return palette;
 }
 
